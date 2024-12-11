@@ -1,0 +1,128 @@
+#############################################
+# GeoNature backend global configuration file
+#############################################
+
+# Database
+SQLALCHEMY_DATABASE_URI = "postgresql://geonatadmin:geonatadmin@localhost:5432/geonature2db"
+URL_APPLICATION = "http://127.0.0.1:4200"
+API_ENDPOINT = "http://127.0.0.1:8000"
+API_TAXHUB = "http://127.0.0.1:5000/api"
+
+# Remplacer par une clé alétoire complexe
+SECRET_KEY = '3c0ae436-711c-4d2e-87c3-47728491def8'
+
+# Langue principale par défaut
+DEFAULT_LANGUAGE = 'fr'
+DISABLED_MODULES = ["MODULATOR"]
+
+#######################################################################################
+###### Si vous souhaitez surcoucher certains paramètres,
+###### compléter les sections ci-dessous à partir du modèle default_config.toml.example
+#######################################################################################
+[VALIDATION]
+AUTO_VALIDATION_ENABLED = true
+AUTO_VALIDATION_CRONTAB = "*/1 * * * *"
+# Configuration liée à la page d’accueil
+[HOME]
+TITLE = "Bienvenue dans GeoNature"
+INTRODUCTION = "Texte d'introduction, configurable pour le modifier régulièrement ou le masquer"
+FOOTER = ""
+
+# Configuration liée aux ID de BDD
+[BDD]
+
+# Configuration générale du frontend
+[FRONTEND]
+
+# Configuration de la Synthese
+[SYNTHESE]
+BLUR_SENSITIVE_OBSERVATIONS = false
+
+[ACCOUNT_MANAGEMENT]
+ENABLE_USER_MANAGEMENT = true
+ENABLE_SIGN_UP = true
+# Configuration cartographique
+[MAPCONFIG]
+[[MAPCONFIG.BASEMAP]]
+name = "IGN Scan 25"
+url = "https://data.geopf.fr/private/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&apikey=ign_scan_ws&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=text/xml&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/jpeg&STYLE=normal"
+attribution = "&copy IGN"
+
+
+[[MAPCONFIG.BASEMAP]]
+name = "IGN Cadastre"
+url = "https://data.geopf.fr/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER=CADASTRALPARCELS.PARCELS&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png&STYLE=normal"
+attribution = "&copy IGN"
+
+REF_LAYERS=[
+    {
+        code="znieff1",
+        type="wms",
+        label="Znieff de Bretagne",
+        activate=false,
+        url="https://geobretagne.fr/geoserver/dreal_b/znieff1/wms",
+        params={layers="znieff1", crs="EPSG:4326", service="wms", format="image/png", version="1.3.0", request="GetMap", transparent=true}
+    }, {
+        code="COM_LYON",
+        type="wfs",
+        label="Communes du Grand Lyon",
+        activate=false,
+        style={
+            color= "red",
+            fill= true,
+            fillOpacity= "0.2",
+            weight= 2,
+            fillColor= "blue"
+        },
+        url="https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=adr_voie_lieu.adrcomgl&outputFormat=geojson&SRSNAME=EPSG:4326"
+    }, {
+        code="VEGE_POST_ELEC",
+        type="geojson",
+        label="Végétation dans les postes élec.",
+        activate=false,
+        style={
+            color= "#ffa43b",
+            fill= false,
+            fillOpacity= "0.0",
+            weight= 2
+        },
+        url="https://www.data.gouv.fr/fr/datasets/r/02aaadfa-f774-4b92-b81f-9f1436182701"
+    }, {
+        code="COM",
+        label="Communes",
+        activate=true,
+        type="area",
+        style={
+            color= "grey",
+            fill= false,
+            fillOpacity= "0.0",
+            weight= 2
+        },
+        params= {limit= 2000}
+    },
+]
+
+# Configuration médias
+[MEDIAS]
+
+[USERSHUB]
+URL_USERSHUB = 'http://127.0.0.1:5001' # sans slash final
+# Administrateur de mon application
+ADMIN_APPLICATION_LOGIN = "admin"
+ADMIN_APPLICATION_PASSWORD = "admin"
+
+[MAIL_CONFIG]
+MAIL_SERVER = 'mail.espaces-naturels.fr'
+MAIL_PORT = 465
+MAIL_USE_TLS = false
+MAIL_USE_SSL = true
+MAIL_USERNAME = 'mon_email@email.io'
+MAIL_PASSWORD = 'monpassword'
+MAIL_DEFAULT_SENDER = 'mon_email@email.io'
+MAIL_ASCII_ATTACHMENTS = false
+
+[[ACCOUNT_MANAGEMENT.ACCOUNT_FORM]]
+type_widget = "text"
+attribut_label = "test"
+attribut_name = "test"
+required = false
