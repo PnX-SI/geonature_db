@@ -1,0 +1,76 @@
+## Fichier de configuration utilisé lors de l'installation de GeoNature
+
+# Set mode to 'dev' to install GeoNature in dev mode
+MODE=dev
+
+# Langue du serveur
+# valeur possible : fr_FR.UTF-8, en_US.utf8 
+# locale -a pour voir la liste des locales disponible
+my_local=fr_FR.UTF-8
+
+# URL Configuration
+###################
+
+# My host URL or IP, starting with http and with / at the end
+my_url=http://127.0.0.1:4200/
+
+
+# PostgreSQL Configuration
+##########################
+
+# Drop eventual existing database during installation
+drop_apps_db=true
+
+# DB host
+# Attention les scripts d'installation automatique (install_db.sh et install_all.sh) ne fonctionneront
+# que si votre BDD est installée en local (localhost). Si vous souhaitez installer votre BDD sur un autre serveur,
+# les scripts n'auront pas les droits suffisants pour créer la BDD sur un autre serveur et cela devra être fait manuellement.
+db_host=localhost
+
+# PostgreSQL port
+db_port=$pg_port
+
+# GeoNature database name
+db_name=$pg_database
+
+# GeoNature database owner username
+user_pg=$user_pg
+
+# GeoNature database owner password
+user_pg_pass=$password_pg
+
+# Local projection SRID
+srid_local=2154
+
+# Default language (locale)
+# Availaible language value : fr
+default_language=fr
+
+# Installation de la base de connaissance des statuts
+install_bdc_statuts=true
+
+# Permet l'installation des couches SIG des communes et départements
+# Seules les couches de métropole en 2154 sont fournies (false conseillé hors métropole)
+install_sig_layers=true
+
+# Installe les grilles INPN (1, 5 et 10km)
+install_grid_layer=true
+
+# Install default French DEM (Mainland France only - BD alti 250m))
+install_default_dem=false
+
+# Vectorise dem raster for more performance. This will increse installation duration and take more disk space
+vectorise_dem=false
+
+# Insert sample data (available only in Mainland France with srid_local=2154 ; false otherwise)
+add_sample_data=true
+
+# Insert INPN sensitivity referential (will force installation of departments and regions)
+install_ref_sensitivity=true
+
+#### Modules GeoNature ####
+
+# Installer le module validation
+install_module_validation=true
+# Installer le module Occurrence d'habitat
+install_module_occhab=true
