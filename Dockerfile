@@ -1,10 +1,11 @@
 ARG pg_image_version
-ARG pg_user=postgres
-ARG pg_password=postgres
-ARG pg_database=geonature2db
+
 
 FROM postgis/postgis:${pg_image_version} AS dumper
 
+ARG pg_user="postgres"
+ARG pg_password="postgres"
+ARG pg_database="geonature2db"
 ARG dump_filename
 
 COPY create_user.sql /docker-entrypoint-initdb.d/01.sql
