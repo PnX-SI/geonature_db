@@ -16,7 +16,7 @@ pg_image_version ?= 17-3.5-alpine
 exit_status := $(shell ./docker_exists.sh $(pg_image_version))
 
 # Module
-monitoring_version ?= 1.0.0
+monitoring_version ?= 1.0.1
 export_version ?= 1.7.2
 dashboard_version ?= 1.5.0
 
@@ -44,12 +44,6 @@ pull_modules:
 	cd gn_module_export && git fetch origin && git checkout ${export_version}
 	cd gn_module_dashboard && git fetch origin && git checkout ${dashboard_version}
 
-install_modules: pull_modules
-	source ./GeoNature/backend/venv/bin/activate && geonature install-gn-module gn_module_monitoring --upgrade-db=true  --build=false
-	source ./GeoNature/backend/venv/bin/activate && geonature install-gn-module gn_module_export --upgrade-db=true  --build=false
-	source ./GeoNature/backend/venv/bin/activate && geonature install-gn-module gn_module_dashboard --upgrade-db=true  --build=false
-
-
 install_geonature: pull_geonature generate_config
 
 	cp settings.ini GeoNature/config/
@@ -58,13 +52,26 @@ install_geonature: pull_geonature generate_config
 	cd GeoNature && git checkout ${tag} && git submodule update
 	cd GeoNature/install && ./01_install_backend.sh && ./03_create_db.sh && ./04_install_gn_modules.sh
 
+install_modules: pull_modules
+	source ./GeoNature/backend/venv/bin/activate && geonature install-gn-module gn_module_monitoring --upgrade-db=true  --build=false
+	source ./GeoNature/backend/venv/bin/activate && geonature install-gn-module gn_module_export --upgrade-db=true  --build=false
+	source ./GeoNature/backend/venv/bin/activate && geonature install-gn-module gn_module_dashboard --upgrade-db=true  --build=false
+
 install_geonature_with_modules: install_geonature install_modules
 
 dump:
-	pg_dump -U ${user_pg} -h localhost -p 5432 ${pg_database} > "geonature_${tag}.sql"
-
+	pg_dump -U ${user_pg} \
+	-h localhost \
+	-p 5432 \
+	--format custom ${pg_database} > "geonature_${tag}.bin"
 build: check_if_postgis_image_exists
-	docker build --build-arg dump_filename="geonature_${tag}.sql" --build-arg pg_image_version=${pg_image_version} -t geonature-db-${tag}:${version} . 
+	docker build \
+	--build-arg dump_filename="geonature_${tag}.bin" \
+	--build-arg pg_image_version=${pg_image_version} \
+	--build-arg pg_user=${user_pg} \
+	--build-arg pg_password=${password_pg} \
+	--build-arg pg_database=${pg_database} \
+	-t geonature-db-${tag}:${version} . 
 
 dump_build: dump build
 
@@ -75,6 +82,7 @@ status:
 	./GeoNature/backend/venv/bin/geonature db status
 
 all: pull_geonature install_geonature_with_modules update_geonature dump_build
+
 
 
 
