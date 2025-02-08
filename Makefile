@@ -17,7 +17,7 @@ monitoring_version ?= 1.0.1
 export_version ?= 1.7.2
 dashboard_version ?= 1.5.0
 
-dump_filename = geonature_2.15.0.bin
+dump_filename = geonature_2.15.0.bi
 
 pull_modules: 
 	if [ ! -d gn_module_monitoring ]; then git clone https://github.com/PnX-SI/gn_module_monitoring.git; fi
