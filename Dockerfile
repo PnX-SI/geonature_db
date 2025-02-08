@@ -111,6 +111,12 @@ RUN service postgresql start && \
 #######################
 FROM postgis/postgis:15-3.3
 
+LABEL org.opencontainers.image.authors="jacquesfize" \
+    org.opencontainers.image.description="Populated PostgreSQL database for GeoNature" \
+    org.opencontainers.image.documentation="https://github.com/jacquesfize/geonature_db_docker" \
+    org.opencontainers.image.source="https://github.com/jacquesfize/geonature_db_docker" \
+    org.opencontainers.image.title="GeoNature PostgreSQL Docker image" 
+# org.opencontainers.image.url="https://hub.docker.com/r/pnxs/geonature-db"
 ARG pg_password
 ENV POSTGRES_PASSWORD=${pg_password}
 
