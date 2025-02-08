@@ -26,4 +26,10 @@ RUN set -e && \
 
 FROM postgis/postgis:${pg_image_version}
 
+LABEL org.opencontainers.image.authors="jacquesfize" \
+    org.opencontainers.image.description="Populated PostgreSQL database for GeoNature" \
+    org.opencontainers.image.documentation="https://github.com/jacquesfize/geonature_db_docker" \
+    org.opencontainers.image.source="https://github.com/jacquesfize/geonature_db_docker" \
+    org.opencontainers.image.title="GeoNature PostgreSQL Docker image"
+
 COPY --from=dumper /data $PGDATA
