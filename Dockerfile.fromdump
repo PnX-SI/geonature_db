@@ -1,0 +1,29 @@
+ARG pg_image_version="17-3.5-alpine"
+ARG pg_user="geonatadmin"
+ARG pg_password="geonatadmin"
+ARG pg_database="geonature2db"
+ARG dump_filename
+
+FROM postgis/postgis:${pg_image_version} AS dumper
+
+ARG pg_user
+ARG pg_password
+ARG pg_database
+ARG dump_filename
+
+ENV POSTGRES_USER=${pg_user}
+ENV POSTGRES_PASSWORD=${pg_password}
+ENV POSTGRES_DB=${pg_database}
+ENV PGDATA=/data
+
+COPY ${dump_filename} /tmp/pgdump.pg
+
+RUN set -e && \
+    nohup bash -c "docker-entrypoint.sh postgres &" && \
+    until pg_isready; do sleep 1; done && \
+    pg_restore -v -c -U ${POSTGRES_USER} -d ${POSTGRES_DB} /tmp/pgdump.pg && \
+    rm -rf /tmp/pgdump.pg ; exit 0
+
+FROM postgis/postgis:${pg_image_version}
+
+COPY --from=dumper /data $PGDATA
