@@ -2,7 +2,6 @@
 # BUILDING PARAMETERS
 #####################
 
-
 ARG pg_user="geonatadmin"
 ARG pg_password="geonatadmin"   
 ARG pg_database="geonature2db"
