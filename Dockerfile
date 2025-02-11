@@ -57,19 +57,11 @@ ENV GEONATURE_CONFIG_FILE="/geonature_config.toml"
 RUN  apt update &&  apt install postgresql-postgis postgis libpq-dev libgdal-dev libffi-dev -y && \
     apt-get clean &&  apt-get autoclean &&  apt-get autoremove &&  rm -rf /var/lib/apt/lists/* 
 
-# RECOVER GEONATURE BACKEND WHEELS
-COPY --from=geonatureback /dist/geonature/*.whl /dist/
-# RECOVER GEONATURE MODULE WHEELS
-COPY --from=build-export /build/dist/*.whl /dist/
-COPY --from=build-dashboard /build/dist/*.whl /dist/
-COPY --from=build-monitoring /build/dist/*.whl /dist/
-
 # RECOVER DATABASE MAIN POPULATION SCRIPT
 COPY --from=geonatureback /populate_db.sh /populate_db.sh 
 
-# INSTALL ALL WHEELS
-WORKDIR /dist/
-RUN pip install *.whl 
+# RECOVER GEONATURE BACKEND WHEELS
+COPY --from=geonatureback /dist/geonature/*.whl /dist/
 
 # INITIALISATION OF THE POSTGRES DATABASE
 USER postgres
@@ -100,6 +92,22 @@ RUN sed -e "s/\$user_pg/${POSTGRES_USER}/g" \
 RUN cat settings.ini > /populate_db_.sh
 RUN cat /populate_db.sh >> /populate_db_.sh && chmod +x /populate_db_.sh
 
+
+##################""
+FROM build_db AS build_db_extra
+
+# RECOVER GEONATURE MODULE WHEELS
+COPY --from=build-export /build/dist/*.whl /dist/
+COPY --from=build-dashboard /build/dist/*.whl /dist/
+COPY --from=build-monitoring /build/dist/*.whl /dist/
+
+
+FROM build_db AS db_populated_stock
+# INSTALL ALL WHEELS
+WORKDIR /dist/
+RUN pip install *.whl 
+
+
 # FINALLY POPULATE THE DATABASE
 RUN service postgresql start && \
     until pg_isready; do sleep 1; done && \
@@ -107,10 +115,22 @@ RUN service postgresql start && \
     geonature upgrade-modules-db
 
 
-#######################
-# FINAL POSTGRES IMAGE
-#######################
-FROM postgis/postgis:15-3.3
+FROM build_db_extra AS db_populated_extra
+# INSTALL ALL WHEELS
+WORKDIR /dist/
+RUN pip install *.whl 
+
+# FINALLY POPULATE THE DATABASE
+RUN service postgresql start && \
+    until pg_isready; do sleep 1; done && \
+    bash -c "/populate_db_.sh" && \
+    geonature upgrade-modules-db
+
+
+####################################
+# FINAL POSTGRES IMAGE WITHOUT EXTRA
+####################################
+FROM postgis/postgis:15-3.3 AS prod
 
 LABEL org.opencontainers.image.authors="jacquesfize" \
     org.opencontainers.image.description="Populated PostgreSQL database for GeoNature" \
@@ -121,7 +141,26 @@ LABEL org.opencontainers.image.authors="jacquesfize" \
 ARG pg_password
 ENV POSTGRES_PASSWORD=${pg_password}
 
-COPY --from=build_db /var/lib/postgresql/15/main $PGDATA
+COPY --from=db_populated_stock /var/lib/postgresql/15/main $PGDATA
+RUN echo "host all all 0.0.0.0/0 trust" > ${PGDATA}/pg_hba.conf
+RUN echo "listen_addresses = '*'" >> ${PGDATA}/postgresql.conf
+
+
+#########################################
+# FINAL POSTGRES IMAGE WITH EXTRA MODULES
+#########################################
+FROM postgis/postgis:15-3.3 AS prod-extra
+
+LABEL org.opencontainers.image.authors="jacquesfize" \
+    org.opencontainers.image.description="Populated PostgreSQL database for GeoNature with monitoring, export and dashboard" \
+    org.opencontainers.image.documentation="https://github.com/jacquesfize/geonature_db_docker" \
+    org.opencontainers.image.source="https://github.com/jacquesfize/geonature_db_docker" \
+    org.opencontainers.image.title="GeoNature PostgreSQL Docker image" 
+# org.opencontainers.image.url="https://hub.docker.com/r/pnxs/geonature-db"
+ARG pg_password
+ENV POSTGRES_PASSWORD=${pg_password}
+
+COPY --from=db_populated_extra /var/lib/postgresql/15/main $PGDATA
 RUN echo "host all all 0.0.0.0/0 trust" > ${PGDATA}/pg_hba.conf
 RUN echo "listen_addresses = '*'" >> ${PGDATA}/postgresql.conf
 
