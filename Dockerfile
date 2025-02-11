@@ -97,12 +97,13 @@ RUN sed -e "s/\$user_pg/${POSTGRES_USER}/g" \
     -e "s/\$pg_database/${POSTGRES_DB}/g" \
     settings.ini.template > settings.ini
 
+RUN cat settings.ini > /populate_db_.sh
+RUN cat /populate_db.sh >> /populate_db_.sh && chmod +x /populate_db_.sh
+
 # FINALLY POPULATE THE DATABASE
 RUN service postgresql start && \
     until pg_isready; do sleep 1; done && \
-    bash -c "source settings.ini" && \
-    export srid_local=2154 && \
-    bash /populate_db.sh && \
+    bash -c "/populate_db_.sh" && \
     geonature upgrade-modules-db
 
 
