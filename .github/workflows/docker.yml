@@ -1,4 +1,3 @@
-#
 name: Create and publish a Docker image
 
 # Configures this workflow to run every time a change is pushed to the branch called `release`.
@@ -19,10 +18,10 @@ jobs:
       matrix:
         include:
           - dockerfile: ./Dockerfile
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            image: docker pull ghcr.io/jacquesfize/geonature-db
             target: prod
           - dockerfile: ./Dockerfile
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-extra
+            image: docker pull ghcr.io/jacquesfize/geonature-db-extra
             target: prod-extra
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
