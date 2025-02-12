@@ -14,6 +14,16 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: ./Dockerfile
+            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            target: prod
+          - dockerfile: ./Dockerfile
+            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-extra
+            target: prod-extra
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
       contents: read
@@ -40,9 +50,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ghcr.io/${{ github.repository_owner }}/geonature-db
-          flavor: |
-            suffix=-prod
+          images: ${{matrix.image}}
           tags: |
             type=ref,event=tag
       # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
@@ -56,6 +64,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          target: ${{ matrix.target }}
           build-args: |
             GEONATURE_VERSION=${{github.ref_name}}
 
