@@ -19,9 +19,9 @@ The image exists in two versions:
 First, pull the image
 
 ```bash
-docker pull ghcr.io/PnX-SI/geonature-db:latest
+docker pull ghcr.io/pnx-si/geonature-db:latest
 # or with extras
-docker pull ghcr.io/PnX-SI/geonature-db-extra:latest
+docker pull ghcr.io/pnx-si/geonature-db-extra:latest
 ```
 
 Then, run it
@@ -31,13 +31,13 @@ docker run -d \
     --name geonature-db \
     --rm \
     -p 5432:5432 \
-    ghcr.io/PnX-SI/geonature-db:latest
+    ghcr.io/pnx-si/geonature-db:latest
 # or with extras
 docker run -d \
     --name geonature-db \
     --rm \
     -p 5432:5432 \
-    ghcr.io/PnX-SI/geonature-db-extra:latest
+    ghcr.io/pnx-si/geonature-db-extra:latest
 ```
 
 ## Building the Image
