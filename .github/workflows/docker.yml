@@ -18,10 +18,10 @@ jobs:
       matrix:
         include:
           - dockerfile: ./Dockerfile
-            image: ghcr.io/jacquesfize/geonature-db
+            image: ghcr.io/PnX-SI/geonature-db
             target: prod
           - dockerfile: ./Dockerfile
-            image: ghcr.io/jacquesfize/geonature-db-extra
+            image: ghcr.io/PnX-SI/geonature-db-extra
             target: prod-extra
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
