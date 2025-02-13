@@ -4,12 +4,53 @@
 
 This project provides a Dockerized PostgreSQL database for Geonature. The generated images are meant to be used for development and testing purposes.
 
-## Prerequisites
+The image exists in two versions:
+
+- One including core modules : Occtax, Occhab, and the validation module
+- One without core modules and extras : Monitoring, Export, and Dashboard
+
+## Requirements
 
 - Docker installed on your system
-- Git installed on your system
+- (optional, when building) Git installed on your system
 
-## Configuration
+## Use prebuilt images
+
+First, pull the image
+
+```bash
+docker pull ghcr.io/PnX-SI/geonature-db:latest
+# or with extras
+docker pull ghcr.io/PnX-SI/geonature-db-extra:latest
+```
+
+Then, run it
+
+```bash
+docker run -d \
+    --name geonature-db \
+    --rm \
+    -p 5432:5432 \
+    ghcr.io/PnX-SI/geonature-db:latest
+# or with extras
+docker run -d \
+    --name geonature-db \
+    --rm \
+    -p 5432:5432 \
+    ghcr.io/PnX-SI/geonature-db-extra:latest
+```
+
+## Building the Image
+
+To build the Geonature DB image, run the following command:
+
+```bash
+make build
+```
+
+This will clone the required Geonature modules, configure them, and build the Docker image.
+
+### Configuration
 
 The following environment variables can be configured:
 
@@ -23,17 +64,7 @@ The following environment variables can be configured:
 - `export_version`: The version of the export module (default: `1.7.2`)
 - `dashboard_version`: The version of the dashboard module (default: `1.5.0`)
 
-## Building the Image
-
-To build the Geonature DB image, run the following command:
-
-```bash
-make build
-```
-
-This will clone the required Geonature modules, configure them, and build the Docker image.
-
-## Building the Image from a Dump
+### Building the Image from a Dump
 
 To build the Geonature DB image from a dump file, run the following command:
 
@@ -46,7 +77,7 @@ This will build the Docker image using the specified dump file. Pratical, if you
 > [!WARNING]  
 > When producing your dump file, it must be generated with `custom` format (https://www.postgresql.org/docs/current/app-pgdump.html)
 
-## Running the Container
+### Running the Container
 
 To run the Geonature DB container, run the following command:
 
