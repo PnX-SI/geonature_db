@@ -4,7 +4,7 @@ SHELL := /bin/bash
 tag ?= stock
 
 # Version that will be indicated in the generate docker Image
-version ?= 2.15.2
+version ?= 2.16.0
 
 # Local PostgreSQL configuration
 user_pg ?= geonatadmin
@@ -13,11 +13,11 @@ pg_port ?= 5432
 pg_database ?= geonature2db
 
 # Module
-monitoring_version ?= 1.0.1
-export_version ?= 1.7.2
-dashboard_version ?= 1.5.0
+monitoring_version ?= 1.0.3
+export_version ?= 1.8.0
+dashboard_version ?= 1.6.0
 
-dump_filename = geonature_2.15.0.bi
+dump_filename = geonature_2.15.0.bin
 
 pull_modules: 
 	if [ ! -d gn_module_monitoring ]; then git clone https://github.com/PnX-SI/gn_module_monitoring.git; fi
