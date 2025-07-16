@@ -140,10 +140,15 @@ LABEL org.opencontainers.image.authors="jacquesfize" \
 # org.opencontainers.image.url="https://hub.docker.com/r/pnxs/geonature-db"
 ARG pg_password
 ENV POSTGRES_PASSWORD=${pg_password}
+ENV LANG fr_FR.utf8
+ENV TZ Europe/Paris
+ENV PGTZ Europe/Paris
+
+RUN localedef -i fr_FR -c -f UTF-8 -A /usr/share/locale/locale.alias fr_FR.UTF-8
 
 COPY --from=db_populated_stock /var/lib/postgresql/15/main $PGDATA
-RUN echo "host all all 0.0.0.0/0 trust" > ${PGDATA}/pg_hba.conf
-RUN echo "listen_addresses = '*'" >> ${PGDATA}/postgresql.conf
+COPY pg_hba.conf ${PGDATA}/pg_hba.conf
+COPY postgresql.conf ${PGDATA}/postgresql.conf
 
 
 #########################################
@@ -159,8 +164,13 @@ LABEL org.opencontainers.image.authors="jacquesfize" \
 # org.opencontainers.image.url="https://hub.docker.com/r/pnxs/geonature-db"
 ARG pg_password
 ENV POSTGRES_PASSWORD=${pg_password}
+ENV LANG fr_FR.utf8
+ENV TZ Europe/Paris
+ENV PGTZ Europe/Paris
+
+RUN localedef -i fr_FR -c -f UTF-8 -A /usr/share/locale/locale.alias fr_FR.UTF-8
 
 COPY --from=db_populated_extra /var/lib/postgresql/15/main $PGDATA
-RUN echo "host all all 0.0.0.0/0 trust" > ${PGDATA}/pg_hba.conf
-RUN echo "listen_addresses = '*'" >> ${PGDATA}/postgresql.conf
+COPY pg_hba.conf ${PGDATA}/pg_hba.conf
+COPY postgresql.conf ${PGDATA}/postgresql.conf
 
