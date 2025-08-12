@@ -13,7 +13,7 @@ pg_port ?= 5432
 pg_database ?= geonature2db
 
 # Module
-monitoring_version ?= 1.0.3
+monitoring_version ?= 1.1.0
 export_version ?= 1.8.0
 dashboard_version ?= 1.6.0
 
@@ -28,7 +28,7 @@ pull_modules:
 	cd gn_module_dashboard && git fetch origin && git checkout ${dashboard_version}
 
 build: pull_modules
-	docker build \
+	docker build --progress=plain  \
 	--build-arg pg_user=${user_pg} \
 	--build-arg pg_password=${password_pg} \
 	--build-arg pg_database=geonature2db \
@@ -36,7 +36,7 @@ build: pull_modules
 	-t geonature-db-${tag}:${version} . 
 
 build_from_dump: 
-	docker build \
+	docker build  \
 	-f Dockerfile.fromdump \
 	--build-arg dump_filename=${dump_filename} \
 	-t geonature-db-dump:$(basename ${dump_filename}) .
