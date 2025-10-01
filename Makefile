@@ -4,7 +4,7 @@ SHELL := /bin/bash
 tag ?= stock
 
 # Version that will be indicated in the generate docker Image
-version ?= 2.16.0
+version ?= 2.16.3
 
 # Local PostgreSQL configuration
 user_pg ?= geonatadmin
@@ -13,7 +13,7 @@ pg_port ?= 5432
 pg_database ?= geonature2db
 
 # Module
-monitoring_version ?= 1.1.0
+monitoring_version ?= 1.2.2
 export_version ?= 1.8.0
 dashboard_version ?= 1.6.0
 
