@@ -63,6 +63,8 @@ COPY --from=geonatureback /populate_db.sh /populate_db.sh
 # RECOVER GEONATURE BACKEND WHEELS
 COPY --from=geonatureback /dist/geonature/*.whl /dist/
 
+RUN echo fr_FR.UTF-8 UTF-8 >> /etc/locale.gen && locale-gen
+
 # INITIALISATION OF THE POSTGRES DATABASE
 USER postgres
 COPY init_db.sql /init_db.sql
@@ -70,7 +72,7 @@ RUN service postgresql start && \
     until pg_isready; do sleep 1; done && \
     createuser -s ${POSTGRES_USER} && \
     psql -c "ALTER USER ${POSTGRES_USER} WITH PASSWORD '${POSTGRES_PASSWORD}';" && \
-    createdb -O ${POSTGRES_USER} ${POSTGRES_DB} && \
+    createdb -O ${POSTGRES_USER} ${POSTGRES_DB} --locale=fr_FR.UTF-8 -T template0  && \
     psql ${POSTGRES_DB} -f /init_db.sql 
 
 # GENERATE CONFIGURATION FILES
@@ -144,7 +146,7 @@ ENV LANG fr_FR.utf8
 ENV TZ Europe/Paris
 ENV PGTZ Europe/Paris
 
-RUN localedef -i fr_FR -c -f UTF-8 -A /usr/share/locale/locale.alias fr_FR.UTF-8
+RUN echo fr_FR.UTF-8 UTF-8 >> /etc/locale.gen && locale-gen
 
 COPY --from=db_populated_stock /var/lib/postgresql/15/main $PGDATA
 COPY pg_hba.conf ${PGDATA}/pg_hba.conf
@@ -168,7 +170,7 @@ ENV LANG fr_FR.utf8
 ENV TZ Europe/Paris
 ENV PGTZ Europe/Paris
 
-RUN localedef -i fr_FR -c -f UTF-8 -A /usr/share/locale/locale.alias fr_FR.UTF-8
+RUN echo fr_FR.UTF-8 UTF-8 >> /etc/locale.gen && locale-gen
 
 COPY --from=db_populated_extra /var/lib/postgresql/15/main $PGDATA
 COPY pg_hba.conf ${PGDATA}/pg_hba.conf
